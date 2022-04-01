@@ -1,0 +1,8 @@
+syntax = "proto3";
+
+message OrientationMsg
+{
+    float roll = 1;
+    float pitch = 2;
+    float yaw = 3;
+}
