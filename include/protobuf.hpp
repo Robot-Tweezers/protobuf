@@ -23,30 +23,47 @@ namespace RobotTweezers
      */
     class Protobuf
     {
-    private:
-        /**
-         * @brief Writes a Protobuf message over UART 
-         * 
-         * @param uart          Uart bus to use for transfer
-         * @param fields        message description (provided in protobuf generated header)
-         * @param data_struct   data structure to write, (must correspond to fields description)
-         * @return true         Successful message encoding and transfer
-         * @return false        Unsuccessful transfer
-         */
-        static bool UartWrite(HardwareSerial *uart, const pb_msgdesc_t *fields, const void *data_struct);
-
-        /**
-         * @brief Read a Protobuf message over UART
-         * 
-         * @param uart          Uart bus to use for transfer
-         * @param fields        message description (provided in protobuf generated header)
-         * @param data_struct   data structure to read, (must correspond to fields description)
-         * @return true         Successful message decoding and transfer
-         * @return false        Unsuccessful transfer
-         */
-        static bool UartRead(HardwareSerial *uart, const pb_msgdesc_t *fields, void *data_struct);
-
     public:
+        /**
+         * @brief Encodes a Protobuf message into a byte buffer
+         * 
+         * @param buffer        Byte array containing encoded message 
+         * @param fields        Fields corresponding to the message being encoded (see generated header)
+         * @param data_struct   Data structure to encode
+         * @return size_t       Byte count of encoded byte buffer
+         */
+        static size_t Encode(pb_byte_t *buffer, const pb_msgdesc_t *fields, const void *data_struct);
+
+        /**
+         * @brief Decodes a byte buffer into a Protobuf message
+         * 
+         * @param buffer        Encoded byte buffer
+         * @param size          Size of byte buffer
+         * @param fields        Fields corresponding to the message type to decode to (see generated header)
+         * @param data_struct   Returned data structure
+         * @return true         Successful decoding 
+         * @return false        Unsuccessful decoding
+         */
+        static bool Decode(pb_byte_t *buffer, size_t size, const pb_msgdesc_t *fields, void *data_struct);
+        
+        /**
+         * @brief Writes a Protobuf message byte buffer over UART 
+         * 
+         * @param uart      Uart bus to use for transfer
+         * @param buffer    Buffer to write over uart
+         * @param size      Size of the buffer
+         */
+        static void UartWriteBuffer(HardwareSerial *uart, const pb_byte_t *buffer, const size_t size);
+
+        /**
+         * @brief Read a Protobuf message byte buffer over UART
+         * 
+         * @param uart      Uart bus to use for transfer
+         * @param buffer    Buffer pointer to data read from uart
+         * @return size_t   Size of the returned data, zero on failure
+         */
+        static size_t UartReadBuffer(HardwareSerial *uart, pb_byte_t *buffer);
+
         /**
          * @brief Write an orientation message over UART
          * 
