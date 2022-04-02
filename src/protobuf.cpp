@@ -19,10 +19,12 @@ size_t RobotTweezers::Protobuf::UartWriteBuffer(HardwareSerial *uart, const pb_b
     return uart->write(buffer, size);
 }
 
-size_t RobotTweezers::Protobuf::WifiWriteBuffer(WiFiClient *wifi, const pb_byte_t *buffer, const size_t size)
-{
-    return wifi->write(buffer, size);
-}
+#ifdef ESP32
+    size_t RobotTweezers::Protobuf::WifiWriteBuffer(WiFiClient *wifi, const pb_byte_t *buffer, const size_t size)
+    {
+        return wifi->write(buffer, size);
+    }
+#endif
 
 size_t RobotTweezers::Protobuf::UartReadBuffer(HardwareSerial *uart, pb_byte_t *buffer)
 {
@@ -30,11 +32,13 @@ size_t RobotTweezers::Protobuf::UartReadBuffer(HardwareSerial *uart, pb_byte_t *
     return uart->readBytes(buffer, size);
 }
 
-size_t RobotTweezers::Protobuf::WifiReadBuffer(WiFiClient *wifi, pb_byte_t *buffer)
-{
-    size_t size = wifi->available();
-    return wifi->readBytes(buffer, size);
-}
+#ifdef ESP32
+    size_t RobotTweezers::Protobuf::WifiReadBuffer(WiFiClient *wifi, pb_byte_t *buffer)
+    {
+        size_t size = wifi->available();
+        return wifi->readBytes(buffer, size);
+    }
+#endif
 
 size_t RobotTweezers::Protobuf::UartWrite(HardwareSerial *uart, const OrientationMsg *orientation_msg)
 {
@@ -46,15 +50,17 @@ size_t RobotTweezers::Protobuf::UartWrite(HardwareSerial *uart, const Orientatio
     return UartWriteBuffer(uart, buffer, size);
 }
 
-size_t RobotTweezers::Protobuf::WifiWrite(WiFiClient *wifi, const OrientationMsg *orientation_msg)
-{
-    pb_byte_t buffer[MAX_MESSAGE_SIZE];
-    size_t size;
-    
-    // Encode stream
-    size = Encode(buffer, OrientationMsg_fields, (const void *)orientation_msg);
-    return WifiWriteBuffer(wifi, buffer, size);
-}
+#ifdef ESP32
+    size_t RobotTweezers::Protobuf::WifiWrite(WiFiClient *wifi, const OrientationMsg *orientation_msg)
+    {
+        pb_byte_t buffer[MAX_MESSAGE_SIZE];
+        size_t size;
+        
+        // Encode stream
+        size = Encode(buffer, OrientationMsg_fields, (const void *)orientation_msg);
+        return WifiWriteBuffer(wifi, buffer, size);
+    }
+#endif
 
 bool RobotTweezers::Protobuf::UartRead(HardwareSerial *uart, OrientationMsg *orientation_msg)
 {
@@ -62,17 +68,19 @@ bool RobotTweezers::Protobuf::UartRead(HardwareSerial *uart, OrientationMsg *ori
     size_t size;
     
     size = UartReadBuffer(uart, buffer);
-    return Decode(buffer, size, OrientationMsg_fields, (void *)orientation_msg);
+    return (size > 0) ? Decode(buffer, size, OrientationMsg_fields, (void *)orientation_msg) : false;
 }
 
-bool RobotTweezers::Protobuf::WifiRead(WiFiClient *wifi, OrientationMsg *orientation_msg)
-{
-    pb_byte_t buffer[MAX_MESSAGE_SIZE];
-    size_t size;
-    
-    size = WifiReadBuffer(wifi, buffer);
-    return Decode(buffer, size, OrientationMsg_fields, (void *)orientation_msg);
-}
+#ifdef ESP32
+    bool RobotTweezers::Protobuf::WifiRead(WiFiClient *wifi, OrientationMsg *orientation_msg)
+    {
+        pb_byte_t buffer[MAX_MESSAGE_SIZE];
+        size_t size;
+        
+        size = WifiReadBuffer(wifi, buffer);
+        return (size > 0) ? Decode(buffer, size, OrientationMsg_fields, (void *)orientation_msg) : false;
+    }
+#endif
 
 size_t RobotTweezers::Protobuf::UartWrite(HardwareSerial *uart, const UartConnection *connection_msg)
 {
@@ -90,5 +98,5 @@ bool RobotTweezers::Protobuf::UartRead(HardwareSerial *uart, UartConnection *con
     size_t size;
     
     size = UartReadBuffer(uart, buffer);
-    return Decode(buffer, size, UartConnection_fields, (void *)connection_msg);
+    return (size > 0) ? Decode(buffer, size, UartConnection_fields, (void *)connection_msg) : false;
 }

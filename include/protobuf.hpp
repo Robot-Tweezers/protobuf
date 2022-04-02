@@ -2,7 +2,9 @@
 #define _PROTOBUF_HPP_
 
 #include <Arduino.h>
-#include <WiFi.h>
+#ifdef ESP32
+    #include <WiFi.h>
+#endif
 
 #include <pb_encode.h>
 #include <pb_decode.h>
@@ -56,6 +58,7 @@ namespace RobotTweezers
          */
         static size_t UartWriteBuffer(HardwareSerial *uart, const pb_byte_t *buffer, const size_t size);
 
+#ifdef ESP32
         /**
          * @brief 
          * 
@@ -64,6 +67,7 @@ namespace RobotTweezers
          * @param size 
          */
         static size_t WifiWriteBuffer(WiFiClient *wifi, const pb_byte_t *buffer, const size_t size);
+#endif
 
         /**
          * @brief Read a Protobuf message byte buffer over UART
@@ -74,6 +78,7 @@ namespace RobotTweezers
          */
         static size_t UartReadBuffer(HardwareSerial *uart, pb_byte_t *buffer);
 
+#ifdef ESP32
         /**
          * @brief 
          * 
@@ -82,6 +87,7 @@ namespace RobotTweezers
          * @return size_t 
          */
         static size_t WifiReadBuffer(WiFiClient *wifi, pb_byte_t *buffer);
+#endif
 
         /**
          * @brief Write an orientation message over UART
@@ -93,6 +99,7 @@ namespace RobotTweezers
          */
         static size_t UartWrite(HardwareSerial *uart, const OrientationMsg *orientation_msg);
 
+#ifdef ESP32
         /**
          * @brief 
          * 
@@ -102,6 +109,7 @@ namespace RobotTweezers
          * @return false 
          */
         static size_t WifiWrite(WiFiClient *wifi, const OrientationMsg *orientation_msg);
+#endif
 
         /**
          * @brief Read an orientation message over UART
@@ -113,6 +121,7 @@ namespace RobotTweezers
          */
         static bool UartRead(HardwareSerial *uart, OrientationMsg *orientation_msg);
 
+#ifdef ESP32
         /**
          * @brief 
          * 
@@ -122,6 +131,7 @@ namespace RobotTweezers
          * @return false 
          */
         static bool WifiRead(WiFiClient *wifi, OrientationMsg *orientation_msg);
+#endif
 
         /**
          * @brief Write an UartConnection message over UART
