@@ -2,6 +2,7 @@
 #define _PROTOBUF_HPP_
 
 #include <Arduino.h>
+#include <WiFi.h>
 
 #include <pb_encode.h>
 #include <pb_decode.h>
@@ -53,7 +54,16 @@ namespace RobotTweezers
          * @param buffer    Buffer to write over uart
          * @param size      Size of the buffer
          */
-        static void UartWriteBuffer(HardwareSerial *uart, const pb_byte_t *buffer, const size_t size);
+        static size_t UartWriteBuffer(HardwareSerial *uart, const pb_byte_t *buffer, const size_t size);
+
+        /**
+         * @brief 
+         * 
+         * @param wifi 
+         * @param buffer 
+         * @param size 
+         */
+        static size_t WifiWriteBuffer(WiFiClient *wifi, const pb_byte_t *buffer, const size_t size);
 
         /**
          * @brief Read a Protobuf message byte buffer over UART
@@ -65,6 +75,15 @@ namespace RobotTweezers
         static size_t UartReadBuffer(HardwareSerial *uart, pb_byte_t *buffer);
 
         /**
+         * @brief 
+         * 
+         * @param wifi 
+         * @param buffer 
+         * @return size_t 
+         */
+        static size_t WifiReadBuffer(WiFiClient *wifi, pb_byte_t *buffer);
+
+        /**
          * @brief Write an orientation message over UART
          * 
          * @param uart              Uart bus to use for transfer
@@ -72,7 +91,17 @@ namespace RobotTweezers
          * @return true             Successful encoding and transfer
          * @return false            Unsuccessful transfer 
          */
-        static bool UartWrite(HardwareSerial *uart, const OrientationMsg *orientation_msg);
+        static size_t UartWrite(HardwareSerial *uart, const OrientationMsg *orientation_msg);
+
+        /**
+         * @brief 
+         * 
+         * @param wifi 
+         * @param orientation_msg 
+         * @return true 
+         * @return false 
+         */
+        static size_t WifiWrite(WiFiClient *wifi, const OrientationMsg *orientation_msg);
 
         /**
          * @brief Read an orientation message over UART
@@ -85,6 +114,16 @@ namespace RobotTweezers
         static bool UartRead(HardwareSerial *uart, OrientationMsg *orientation_msg);
 
         /**
+         * @brief 
+         * 
+         * @param wifi 
+         * @param orientation_msg 
+         * @return true 
+         * @return false 
+         */
+        static bool WifiRead(WiFiClient *wifi, OrientationMsg *orientation_msg);
+
+        /**
          * @brief Write an UartConnection message over UART
          * 
          * @param uart              Uart bus to use for transfer
@@ -92,7 +131,7 @@ namespace RobotTweezers
          * @return true             Successful encoding and transfer
          * @return false            Unsuccessful transfer 
          */
-        static bool UartWrite(HardwareSerial *uart, const UartConnection *connection_msg);
+        static size_t UartWrite(HardwareSerial *uart, const UartConnection *connection_msg);
 
         /**
          * @brief Read an UartConnection message over UART
